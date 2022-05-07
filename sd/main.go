@@ -1,7 +1,7 @@
 package main
 
-import "log"
+import "github.com/zzzz465/portal/sd/cmd"
 
 func main() {
-	log.Println("Hello World!")
+	cmd.Execute()
 }
