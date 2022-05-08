@@ -17,7 +17,9 @@ func NewInMemoryStore() *InMemoryStore {
 	}
 }
 
-func (s *InMemoryStore) WriteRecord(key string, record types.Record) error {
+func (s *InMemoryStore) WriteRecord(record types.Record) error {
+	key := fmt.Sprintf("%s:%s", record.Metadata.DataSource, record.Name)
+
 	s.dict[key] = record
 
 	return nil

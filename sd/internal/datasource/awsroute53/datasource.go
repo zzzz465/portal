@@ -64,7 +64,6 @@ func toRecords(recordSets []types2.ResourceRecordSet) []types.Record {
 
 	for _, set := range filteredSets {
 		records = append(records, types.Record{
-			Key:  *set.Name,
 			Name: *set.Name,
 			Metadata: types.RecordMetadata{
 				DataSource: DataSourceId,

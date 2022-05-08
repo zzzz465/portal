@@ -71,7 +71,7 @@ func (r *Runner) updateRecords(ctx context.Context) error {
 	}
 
 	for _, record := range records {
-		err2 := r.store.WriteRecord(record.Key, record)
+		err2 := r.store.WriteRecord(record)
 		if err2 != nil {
 			err = multierror.Append(err, err2)
 		}

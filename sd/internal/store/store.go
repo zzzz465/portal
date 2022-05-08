@@ -7,6 +7,6 @@ import "github.com/zzzz465/portal/sd/internal/types"
 // TODO: add WriteMany
 type Store interface {
 	GetRecord(key string) (*types.Record, error)
-	WriteRecord(key string, record types.Record) error
+	WriteRecord(record types.Record) error
 	DeleteRecord(key string) error
 }

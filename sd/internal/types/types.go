@@ -1,7 +1,6 @@
 package types
 
 type Record struct {
-	Key      string
 	Name     string
 	Metadata RecordMetadata
 }
