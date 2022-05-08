@@ -42,19 +42,19 @@ func init() {
 func fetchRoute53Records(cmd *cobra.Command, args []string) {
 	awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
-		errExit(1, "failed init aws config. %v", err)
+		errExit(1, "failed init aws config. %+v", err)
 	}
 
 	client := route53.NewFromConfig(awsConfig)
 
 	ds, err := awsroute53.NewDataSource(client, nil)
 	if err != nil {
-		errExit(1, "failed creating aws route53 datasource. %v", err)
+		errExit(1, "failed creating aws route53 datasource. %+v", err)
 	}
 
 	records, err := ds.FetchRecords()
 	if err != nil {
-		errExit(1, "failed fetching records. %v", err)
+		errExit(1, "failed fetching records. %+v", err)
 	}
 
 	log.Infof("found %d records.", len(records))
