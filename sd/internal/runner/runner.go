@@ -2,17 +2,19 @@ package runner
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"time"
 )
 
 type Runner struct {
 	datasource datasource
-	log *zap.SugaredLogger
+	store      *store
+	log        *zap.SugaredLogger
 }
 
-func NewRunner(datasource datasource, log *zap.SugaredLogger) (*Runner, error) {
-	runner := &Runner{datasource: datasource, log: log}
+func NewRunner(datasource datasource, store *store, log *zap.SugaredLogger) (*Runner, error) {
+	runner := &Runner{datasource: datasource, store: store, log: log}
 
 	if log == nil {
 		log, err := zap.NewDevelopment()
@@ -57,4 +59,5 @@ func (r *Runner) run(ctx context.Context) error {
 
 func (r *Runner) updateRecords(ctx context.Context) error {
 	// TODO: impl this
+	return errors.New("method not implemented.")
 }
