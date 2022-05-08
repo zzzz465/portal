@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/pkg/errors"
 )
 
 func GetAllRecordSets(client *route53.Client) ([]types.ResourceRecordSet, error) {
@@ -22,7 +23,7 @@ func ListAllHostedZones(client *route53.Client) ([]types.HostedZone, error) {
 	for {
 		output, err := client.ListHostedZones(context.TODO(), &route53.ListHostedZonesInput{Marker: marker})
 		if err != nil {
-			return hostedZones, err
+			return hostedZones, errors.Wrap(err, "failed ListHoztedZones")
 		}
 
 		hostedZones = append(hostedZones, output.HostedZones...)
@@ -47,7 +48,7 @@ func ListAllRecords(client *route53.Client, hostedZones []types.HostedZone) ([]t
 			StartRecordType:       types.RRTypeA,
 		})
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "failed ListResourceRecordSets")
 		}
 
 		records = append(records, output.ResourceRecordSets...)
