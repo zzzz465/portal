@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 )
 
 func GetAllRecordSets(client *route53.Client) ([]types.ResourceRecordSet, error) {
