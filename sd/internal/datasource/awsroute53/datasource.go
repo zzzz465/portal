@@ -17,6 +17,14 @@ type DataSource struct {
 	log           *zap.SugaredLogger
 }
 
+func (ds *DataSource) Identifier() string {
+	return DataSourceId
+}
+
+func (ds *DataSource) TTL() int {
+	return 60
+}
+
 func NewDataSource(client *route53.Client, log *zap.SugaredLogger) (*DataSource, error) {
 	ds := &DataSource{
 		route53Client: client,
