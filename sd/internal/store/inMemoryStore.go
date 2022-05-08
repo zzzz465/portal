@@ -1,6 +1,10 @@
 package store
 
-import "github.com/zzzz465/portal/sd/internal/types"
+import (
+	"fmt"
+	"github.com/zzzz465/portal/sd/internal/errors"
+	"github.com/zzzz465/portal/sd/internal/types"
+)
 
 type InMemoryStore struct {
 	dict map[string]types.Record
@@ -18,10 +22,14 @@ func (s *InMemoryStore) WriteRecord(key string, record types.Record) error {
 	return nil
 }
 
-func (s *InMemoryStore) GetRecord(key string) (*types.Record, bool) {
+func (s *InMemoryStore) GetRecord(key string) (*types.Record, error) {
 	record, exists := s.dict[key]
 
-	return &record, exists
+	if exists {
+		return &record, nil
+	}
+
+	return nil, errors.NewNotExistError(fmt.Sprintf("key %s not exists.", key))
 }
 
 func (s *InMemoryStore) DeleteRecord(key string) error {
