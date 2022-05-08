@@ -21,7 +21,7 @@ var fetchCmd = &cobra.Command{
 var fetchRoute53RecordsCmd = &cobra.Command{
 	Use:   "aws-route-53",
 	Short: "use aws Route53 as data source.",
-	Run:   fetchRoute53Records,
+	Run:   runFetchAwsRoute53,
 }
 
 func init() {
@@ -39,7 +39,7 @@ func init() {
 	// fetchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func fetchRoute53Records(cmd *cobra.Command, args []string) {
+func runFetchAwsRoute53(cmd *cobra.Command, args []string) {
 	awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
 		errExit(1, "failed init aws config. %+v", err)
