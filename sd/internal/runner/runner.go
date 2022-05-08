@@ -42,6 +42,7 @@ func (r *Runner) run(ctx context.Context) error {
 		wait := time.Duration(r.datasource.TTL()) * time.Second
 		nextTime := time.Now().Add(wait)
 
+		r.log.Infof("start updating records...")
 		err := r.updateRecords(ctx)
 		if err != nil {
 			r.log.Errorf("failed update records. %v", err)
@@ -55,6 +56,7 @@ func (r *Runner) run(ctx context.Context) error {
 			break
 		}
 
+		r.log.Debugf("wait until %v...", time.Until(nextTime))
 		<-time.After(time.Until(nextTime))
 	}
 }
