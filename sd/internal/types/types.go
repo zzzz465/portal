@@ -1,8 +1,8 @@
 package types
 
 type Record struct {
-	IP       string
-	Host     string
+	Key      string
+	Name     string
 	Metadata RecordMetadata
 }
 

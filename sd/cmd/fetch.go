@@ -60,6 +60,6 @@ func fetchRoute53Records(cmd *cobra.Command, args []string) {
 	log.Infof("found %d records.", len(records))
 
 	for _, record := range records {
-		log.Info(record.Host)
+		log.Info(record.Name)
 	}
 }
