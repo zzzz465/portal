@@ -3,6 +3,7 @@ package awsroute53
 import (
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	types2 "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/samber/lo"
 	"github.com/zzzz465/portal/sd/internal/types"
 	"go.uber.org/zap"
 )
@@ -48,17 +49,20 @@ func (ds *DataSource) FetchRecords() ([]types.Record, error) {
 
 func toRecords(recordSets []types2.ResourceRecordSet) []types.Record {
 	records := make([]types.Record, 0)
-	for _, recordSet := range recordSets {
-		for _, record := range recordSet.ResourceRecords {
-			records = append(records, types.Record{
-				IP:   "",
-				Host: *record.Value,
-				Metadata: types.RecordMetadata{
-					DataSource: DataSourceId,
-					Tags:       map[string]string{},
-				},
-			})
-		}
+
+	filteredSets := lo.Filter[types2.ResourceRecordSet](recordSets, func(v types2.ResourceRecordSet, i int) bool {
+		return v.Type == types2.RRTypeA || v.Type == types2.RRTypeAaaa || v.Type == types2.RRTypeCname
+	})
+
+	for _, set := range filteredSets {
+		records = append(records, types.Record{
+			IP:   "",
+			Host: *set.Name,
+			Metadata: types.RecordMetadata{
+				DataSource: DataSourceId,
+				Tags:       map[string]string{},
+			},
+		})
 	}
 
 	return records
