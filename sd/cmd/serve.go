@@ -1,7 +1,12 @@
 package cmd
 
 import (
+	"context"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/spf13/cobra"
+	"github.com/zzzz465/portal/sd/internal/datasource/awsroute53"
+	"github.com/zzzz465/portal/sd/internal/runner"
 	"github.com/zzzz465/portal/sd/internal/store"
 	"github.com/zzzz465/portal/sd/internal/web"
 )
@@ -29,8 +34,26 @@ func init() {
 func runServe(cmd *cobra.Command, args []string) {
 	// TODO: replace in-memory store to any store that given from argument.
 
-	s := store.NewInMemoryStore()
-	server := web.NewHTTPServer(s)
+	inMemoryStore := store.NewInMemoryStore()
+
+	awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+	if err != nil {
+		errExit(1, "failed init aws config. %+v", err)
+	}
+
+	client := route53.NewFromConfig(awsConfig)
+
+	ds, err := awsroute53.NewDataSource(client, nil)
+	if err != nil {
+		errExit(1, "failed creating aws route53 datasource. %+v", err)
+	}
+
+	route53Runner, err := runner.NewRunner(ds, inMemoryStore, nil)
+	if err != nil {
+		errExit(1, "failed creating route53 runner. %+v", err)
+	}
+
+	server := web.NewHTTPServer(inMemoryStore)
 	if err := server.Start(); err != nil {
 		log.Error(err)
 	}
