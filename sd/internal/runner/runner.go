@@ -1,25 +1,60 @@
 package runner
 
+import (
+	"context"
+	"go.uber.org/zap"
+	"time"
+)
+
 type Runner struct {
 	datasource datasource
+	log *zap.SugaredLogger
 }
 
-func NewRunner(datasource datasource) *Runner {
-	runner := &Runner{datasource: datasource}
+func NewRunner(datasource datasource, log *zap.SugaredLogger) (*Runner, error) {
+	runner := &Runner{datasource: datasource, log: log}
 
-	return runner
+	if log == nil {
+		log, err := zap.NewDevelopment()
+		if err != nil {
+			return nil, err
+		}
+
+		runner.log = log.Sugar()
+	}
+
+	return runner, nil
 }
 
-func (r *Runner) Run() chan<- error {
-	exit := make(chan<- error)
-
+func (r *Runner) Run(ctx context.Context, errChan chan<- error) {
 	go func() {
-		exit <- r.run()
+		err := r.run(ctx)
+		if err != nil {
+			errChan <- err
+		}
 	}()
-
-	return exit
 }
 
-func (r *Runner) run() error {
-	return nil
+func (r *Runner) run(ctx context.Context) error {
+	for {
+		err := r.updateRecords(ctx)
+		if err != nil {
+			r.log.Errorf("failed update records. %v", err)
+		}
+
+		select {
+		case <-ctx.Done():
+			return nil
+
+		default:
+			break
+		}
+
+		wait := time.Duration(r.datasource.TTL()) * time.Second
+		<-time.After(wait)
+	}
+}
+
+func (r *Runner) updateRecords(ctx context.Context) error {
+	// TODO: impl this
 }
