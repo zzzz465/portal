@@ -23,7 +23,7 @@ func ListAllHostedZones(client *route53.Client) ([]types.HostedZone, error) {
 	for {
 		output, err := client.ListHostedZones(context.TODO(), &route53.ListHostedZonesInput{Marker: marker})
 		if err != nil {
-			return hostedZones, errors.Wrap(err, "failed ListHoztedZones")
+			return hostedZones, errors.Wrap(err, "failed ListHostedZones")
 		}
 
 		hostedZones = append(hostedZones, output.HostedZones...)
