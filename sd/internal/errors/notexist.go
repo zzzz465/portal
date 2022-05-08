@@ -8,6 +8,8 @@ type errorNotExist struct {
 	message string
 }
 
+var ErrNotExist = NewNotExistError("")
+
 func NewNotExistError(message string) error {
 	return &errorNotExist{
 		message: message,
