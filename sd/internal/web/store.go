@@ -4,22 +4,34 @@ import (
 	"fmt"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
+	_ "github.com/zzzz465/portal/sd/docs"
 	errors2 "github.com/zzzz465/portal/sd/internal/errors"
 	"github.com/zzzz465/portal/sd/internal/store"
-	"path"
-
-	_ "github.com/zzzz465/portal/sd/docs"
+	"sort"
 )
 
 func RegisterStoreHandlers(g *echo.Group, store store.Store) {
-	g.GET("/", func(c echo.Context) error {
-		return c.String(200, fmt.Sprintf("usage: %s", path.Join(c.Path(), "<datasource>")))
-	})
+	g.GET("/", getRecordsHandler(store))
 
-	g.GET("/:datasource", getRecordsHandler(store))
+	g.GET("/:datasource", getRecordHandler(store))
 }
 
-// getRecordsHandler godoc
+func getRecordsHandler(store store.Store) func(c echo.Context) error {
+	return func(c echo.Context) error {
+		records, err := store.GetRecords()
+		if err != nil {
+			return c.String(500, err.Error())
+		}
+
+		sort.Slice(records, func(i int, j int) bool {
+			return records[i].Name < records[j].Name
+		})
+
+		return c.JSON(200, records)
+	}
+}
+
+// getRecordHandler godoc
 // @Summary      get all records of given data source
 // @Tags         records
 // @Produce      json
@@ -27,7 +39,7 @@ func RegisterStoreHandlers(g *echo.Group, store store.Store) {
 // @Failure      400
 // @Failure      500
 // @Router       /store [get]
-func getRecordsHandler(store store.Store) func(c echo.Context) error {
+func getRecordHandler(store store.Store) func(c echo.Context) error {
 	return func(c echo.Context) error {
 		datasource := c.Param("datasource")
 		records, err := store.GetRecord(datasource)
