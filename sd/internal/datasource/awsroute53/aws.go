@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
-	"github.com/hashicorp/go-multierror"
 )
 
 func GetAllRecordSets(client *route53.Client) ([]types.ResourceRecordSet, error) {
@@ -38,18 +37,17 @@ func ListAllHostedZones(client *route53.Client) ([]types.HostedZone, error) {
 }
 
 func ListAllRecords(client *route53.Client, hostedZones []types.HostedZone) ([]types.ResourceRecordSet, error) {
-	var err error
 	var startRecordIdentifier *string
 	records := make([]types.ResourceRecordSet, 0)
 
 	for _, zone := range hostedZones {
-		output, err2 := client.ListResourceRecordSets(context.TODO(), &route53.ListResourceRecordSetsInput{
+		output, err := client.ListResourceRecordSets(context.TODO(), &route53.ListResourceRecordSetsInput{
 			HostedZoneId:          zone.Id,
 			StartRecordIdentifier: startRecordIdentifier,
 			StartRecordType:       types.RRTypeA,
 		})
-		if err2 != nil {
-			err = multierror.Append(err, err2)
+		if err != nil {
+			return nil, err
 		}
 
 		records = append(records, output.ResourceRecordSets...)
@@ -60,5 +58,5 @@ func ListAllRecords(client *route53.Client, hostedZones []types.HostedZone) ([]t
 		}
 	}
 
-	return records, err
+	return records, nil
 }
