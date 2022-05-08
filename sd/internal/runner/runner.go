@@ -57,7 +57,7 @@ func (r *Runner) run(ctx context.Context) error {
 			break
 		}
 
-		r.log.Debugf("wait until %v...", time.Until(nextTime))
+		r.log.Debugf("wait %v (left: %v)", wait, time.Until(nextTime))
 		<-time.After(time.Until(nextTime))
 	}
 }
