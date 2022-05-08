@@ -6,7 +6,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/spf13/cobra"
@@ -17,9 +16,6 @@ import (
 var fetchCmd = &cobra.Command{
 	Use:   "fetch",
 	Short: "fetch current records from datasource.",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("fetch called")
-	},
 }
 
 var fetchRoute53RecordsCmd = &cobra.Command{
@@ -44,7 +40,7 @@ func init() {
 }
 
 func fetchRoute53Records(cmd *cobra.Command, args []string) {
-	awsConfig, err := config.LoadDefaultConfig(context.TODO())
+	awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
 		errExit(1, "failed init aws config. %v", err)
 	}
