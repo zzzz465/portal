@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	errors2 "github.com/cockroachdb/errors"
 	"github.com/zzzz465/portal/sd/internal/errors"
 	"github.com/zzzz465/portal/sd/internal/types"
 )
@@ -29,7 +30,7 @@ func (s *InMemoryStore) GetRecord(key string) (*types.Record, error) {
 		return &record, nil
 	}
 
-	return nil, errors.NewNotExistError(fmt.Sprintf("key %s not exists.", key))
+	return nil, errors2.Wrap(errors.ErrNotExist, fmt.Sprintf("key %s not exists.", key))
 }
 
 func (s *InMemoryStore) DeleteRecord(key string) error {
