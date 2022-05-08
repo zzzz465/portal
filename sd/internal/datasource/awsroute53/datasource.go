@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	DataSourceId = "Route53"
+	DataSourceId = "route53"
 )
 
 type DataSource struct {
