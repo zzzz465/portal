@@ -29,11 +29,11 @@ func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger)
 	return runner, nil
 }
 
-func (r *Runner) Run(ctx context.Context, errChan chan<- error) {
+func (r *Runner) Run(ctx context.Context, error *error) {
 	go func() {
 		err := r.run(ctx)
 		if err != nil {
-			errChan <- err
+			*error = err
 		}
 	}()
 }

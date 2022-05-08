@@ -33,6 +33,7 @@ func init() {
 
 func runServe(cmd *cobra.Command, args []string) {
 	// TODO: replace in-memory store to any store that given from argument.
+	// TODO: support selecting (multiple) data source. maybe use config file?
 
 	inMemoryStore := store.NewInMemoryStore()
 
@@ -53,8 +54,21 @@ func runServe(cmd *cobra.Command, args []string) {
 		errExit(1, "failed creating route53 runner. %+v", err)
 	}
 
+	ctx, cancel := context.WithCancel(nil)
+	defer cancel()
+
+	var runnerError error
+	// TODO: what's the better way to get error that raised in runner?
+	route53Runner.Run(ctx, &runnerError)
+
 	server := web.NewHTTPServer(inMemoryStore)
-	if err := server.Start(); err != nil {
-		log.Error(err)
+	serverError := server.Start()
+
+	if serverError != nil {
+		log.Errorf("serverError: %+v", serverError)
+	}
+
+	if runnerError != nil {
+		log.Errorf("runnerError: %+v", runnerError)
 	}
 }
