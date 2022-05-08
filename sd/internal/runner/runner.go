@@ -3,17 +3,18 @@ package runner
 import (
 	"context"
 	"github.com/hashicorp/go-multierror"
+	"github.com/zzzz465/portal/sd/internal/store"
 	"go.uber.org/zap"
 	"time"
 )
 
 type Runner struct {
 	datasource datasource
-	store      store
+	store      store.Store
 	log        *zap.SugaredLogger
 }
 
-func NewRunner(datasource datasource, store store, log *zap.SugaredLogger) (*Runner, error) {
+func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger) (*Runner, error) {
 	runner := &Runner{datasource: datasource, store: store, log: log}
 
 	if log == nil {
