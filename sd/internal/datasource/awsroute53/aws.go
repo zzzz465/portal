@@ -38,14 +38,13 @@ func ListAllHostedZones(client *route53.Client) ([]types.HostedZone, error) {
 }
 
 func ListAllRecords(client *route53.Client, hostedZones []types.HostedZone) ([]types.ResourceRecordSet, error) {
-	var startRecordIdentifier *string
+	var startRecordName *string
 	records := make([]types.ResourceRecordSet, 0)
 
 	for _, zone := range hostedZones {
 		output, err := client.ListResourceRecordSets(context.TODO(), &route53.ListResourceRecordSetsInput{
-			HostedZoneId:          zone.Id,
-			StartRecordIdentifier: startRecordIdentifier,
-			StartRecordType:       types.RRTypeA,
+			HostedZoneId:    zone.Id,
+			StartRecordName: startRecordName,
 		})
 		if err != nil {
 			return nil, errors.Wrap(err, "failed ListResourceRecordSets")
@@ -53,8 +52,8 @@ func ListAllRecords(client *route53.Client, hostedZones []types.HostedZone) ([]t
 
 		records = append(records, output.ResourceRecordSets...)
 
-		startRecordIdentifier = output.NextRecordIdentifier
-		if startRecordIdentifier == nil {
+		startRecordName = output.NextRecordName
+		if startRecordName == nil {
 			break
 		}
 	}
