@@ -54,7 +54,7 @@ func runServe(cmd *cobra.Command, args []string) {
 		errExit(1, "failed creating route53 runner. %+v", err)
 	}
 
-	ctx, cancel := context.WithCancel(nil)
+	ctx, cancel := context.WithCancel(context.TODO())
 	defer cancel()
 
 	var runnerError error
