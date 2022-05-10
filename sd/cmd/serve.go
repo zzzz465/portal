@@ -24,6 +24,14 @@ func init() {
     rootCmd.AddCommand(serveCmd)
 
     // Here you will define your flags and configuration settings.
+    serveCmd.Flags().Bool("route53", false, "enable query records from aws route53.")
+    if err := viper.BindPFlag("datasource.AWSRoute53.enabled", serveCmd.Flags().Lookup("route53")); err != nil {
+        log.Panic(err)
+    }
+    serveCmd.Flags().Bool("static", false, "enable query records from static config.")
+    if err := viper.BindPFlag("datasource.static.enabled", serveCmd.Flags().Lookup("static")); err != nil {
+        log.Panic(err)
+    }
 
     // Cobra supports Persistent Flags which will work for this command
     // and all subcommands, e.g.:
