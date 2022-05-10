@@ -38,6 +38,8 @@ func (r *Runner) Start(ctx context.Context, error *error) {
 		*error = errors.New("runner is already running!")
 	}
 
+	r.log.Infof("starting runner. interval: %s", r.datasource.TTL())
+
 	intervalCtx, cancel := context.WithCancel(ctx)
 	Interval(intervalCtx, r.datasource.TTL(), r.jobChan)
 
@@ -63,6 +65,7 @@ func (r *Runner) run(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			return nil
+		default:
 		}
 	}
 }
