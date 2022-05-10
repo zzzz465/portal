@@ -1,13 +1,17 @@
 package types
 
 type Record struct {
-    Name     string
-    Metadata RecordMetadata
+    Name     string         `yaml:"name"`
+    Metadata RecordMetadata `yaml:"metadata"`
+}
+
+func NewRecord() Record {
+    return Record{Metadata: RecordMetadata{Tags: map[string]string{}}}
 }
 
 type RecordMetadata struct {
-    DataSource string
-    Tags       map[string]string
+    DataSource string            `yaml:"dataSource"`
+    Tags       map[string]string `yaml:"tags"`
 }
 
 func NewRecordMetadata() *RecordMetadata {
