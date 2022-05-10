@@ -1,9 +1,12 @@
 package runner
 
-import "github.com/zzzz465/portal/sd/internal/types"
+import (
+	"github.com/zzzz465/portal/sd/internal/types"
+	"time"
+)
 
 type datasource interface {
 	Identifier() string
-	TTL() int // TODO: replace to time.duration
+	TTL() time.Duration
 	FetchRecords() ([]types.Record, error)
 }

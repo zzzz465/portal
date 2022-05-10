@@ -59,7 +59,7 @@ func runServe(cmd *cobra.Command, args []string) {
 
 	var runnerError error
 	// TODO: what's the better way to get error that raised in runner?
-	route53Runner.Run(ctx, &runnerError)
+	route53Runner.Start(ctx, &runnerError)
 
 	server := web.NewHTTPServer(inMemoryStore)
 	serverError := server.Start()

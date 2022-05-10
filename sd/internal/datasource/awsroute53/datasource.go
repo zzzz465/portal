@@ -6,6 +6,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/zzzz465/portal/sd/internal/types"
 	"go.uber.org/zap"
+	"time"
 )
 
 const (
@@ -21,7 +22,7 @@ func (ds *DataSource) Identifier() string {
 	return DataSourceId
 }
 
-func (ds *DataSource) TTL() int {
+func (ds *DataSource) TTL() time.Duration {
 	return 60
 }
 

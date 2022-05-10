@@ -2,20 +2,23 @@ package runner
 
 import (
 	"context"
+	"github.com/cockroachdb/errors"
 	"github.com/hashicorp/go-multierror"
 	"github.com/zzzz465/portal/sd/internal/store"
 	"go.uber.org/zap"
-	"time"
 )
 
 type Runner struct {
 	datasource datasource
 	store      store.Store
 	log        *zap.SugaredLogger
+	running    bool
+
+	jobChan chan any
 }
 
 func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger) (*Runner, error) {
-	runner := &Runner{datasource: datasource, store: store, log: log}
+	runner := &Runner{datasource: datasource, store: store, log: log, jobChan: make(chan any)}
 
 	if log == nil {
 		log, err := zap.NewDevelopment()
@@ -29,37 +32,43 @@ func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger)
 	return runner, nil
 }
 
-func (r *Runner) Run(ctx context.Context, error *error) {
+func (r *Runner) Start(ctx context.Context, error *error) {
+	if r.running {
+		*error = errors.New("runner is already running!")
+	}
+
+	intervalCtx, cancel := context.WithCancel(ctx)
+	Interval(intervalCtx, r.datasource.TTL(), r.jobChan)
+
 	go func() {
 		err := r.run(ctx)
 		if err != nil {
 			*error = err
 		}
+
+		cancel()
 	}()
 }
 
 func (r *Runner) run(ctx context.Context) error {
 	for {
-		wait := time.Duration(r.datasource.TTL()) * time.Second
-		nextTime := time.Now().Add(wait)
+		<-r.jobChan
 
-		r.log.Infof("start updating records...")
-		err := r.updateRecords(ctx)
+		err := r.executeTask(ctx)
 		if err != nil {
-			r.log.Errorf("failed update records. %v", err)
+			r.log.Errorf("failed updating records. err: %+v", err)
 		}
 
 		select {
 		case <-ctx.Done():
 			return nil
-
-		default:
-			break
 		}
-
-		r.log.Debugf("wait %v (left: %v)", wait, time.Until(nextTime))
-		<-time.After(time.Until(nextTime))
 	}
+}
+
+func (r *Runner) executeTask(ctx context.Context) error {
+	r.log.Infof("start updating records...")
+	return r.updateRecords(ctx)
 }
 
 func (r *Runner) updateRecords(ctx context.Context) error {
