@@ -5,6 +5,7 @@ import (
     "github.com/stretchr/testify/assert"
     "github.com/zzzz465/portal/sd/internal/datasource/static"
     "log"
+    "reflect"
     "strings"
     "testing"
 )
@@ -19,19 +20,23 @@ datasource:
         enabled: true
         values:
             - name: site-a.example.com
-              tags:
-                region: Seoul
+              metadata:
+                  tags:
+                    region: Seoul
             - name: site-b.example.com
-              tags:
-                region: California
+              metadata:
+                  tags:
+                    region: California
             - name: portal.domain.com
-              tags:
-                region: Tokyo
-                service: A
+              metadata:
+                  tags:
+                    region: Tokyo
+                    service: A
             - name: surf.domain.com
-              tags:
-                region:  New York
-                service: B
+              metadata:
+                  tags:
+                    region:  New York
+                    service: B
 `
 
     err := staticDataSource.ReadConfig(strings.NewReader(cfg))
@@ -39,7 +44,7 @@ datasource:
         t.Error(err)
     }
 
-    log.Println(staticDataSource.Get("datasource.static.values"))
+    log.Println(reflect.TypeOf(staticDataSource.Get("datasource.static.values")))
 
     ds := static.NewDataSource(staticDataSource)
 
@@ -49,28 +54,28 @@ datasource:
     }
 
     // index 0 test
-    assert.Equal(t, records[0].Name, "site-a.example.com")
+    assert.Equal(t, "site-a.example.com", records[0].Name)
     assert.NotNilf(t, records[0].Metadata, "metadata should not be nil.")
-    assert.Equal(t, records[0].Metadata.DataSource, "static")
-    assert.Equal(t, records[0].Metadata.Tags["region"], "Seoul")
+    assert.Equal(t, "static", records[0].Metadata.DataSource)
+    assert.Equal(t, "Seoul", records[0].Metadata.Tags["region"])
 
-    // index 0 test
-    assert.Equal(t, records[0].Name, "site-b.example.com")
-    assert.NotNilf(t, records[0].Metadata, "metadata should not be nil.")
-    assert.Equal(t, records[0].Metadata.DataSource, "static")
-    assert.Equal(t, records[0].Metadata.Tags["region"], "California")
+    // index 1 test
+    assert.Equal(t, "site-b.example.com", records[1].Name)
+    assert.NotNilf(t, records[1].Metadata, "metadata should not be nil.")
+    assert.Equal(t, "static", records[1].Metadata.DataSource)
+    assert.Equal(t, "California", records[1].Metadata.Tags["region"])
 
-    // index 0 test
-    assert.Equal(t, records[0].Name, "portal.domain.com")
-    assert.NotNilf(t, records[0].Metadata, "metadata should not be nil.")
-    assert.Equal(t, records[0].Metadata.DataSource, "static")
-    assert.Equal(t, records[0].Metadata.Tags["region"], "Tokyo")
-    assert.Equal(t, records[0].Metadata.Tags["service"], "A")
+    // index 2 test
+    assert.Equal(t, "portal.domain.com", records[2].Name)
+    assert.NotNilf(t, records[2].Metadata, "metadata should not be nil.")
+    assert.Equal(t, "static", records[2].Metadata.DataSource)
+    assert.Equal(t, "Tokyo", records[2].Metadata.Tags["region"])
+    assert.Equal(t, "A", records[2].Metadata.Tags["service"])
 
-    // index 0 test
-    assert.Equal(t, records[0].Name, "surf.domain.com")
-    assert.NotNilf(t, records[0].Metadata, "metadata should not be nil.")
-    assert.Equal(t, records[0].Metadata.DataSource, "static")
-    assert.Equal(t, records[0].Metadata.Tags["region"], "New York")
-    assert.Equal(t, records[0].Metadata.Tags["service"], "B")
+    // index 3 test
+    assert.Equal(t, "surf.domain.com", records[3].Name)
+    assert.NotNilf(t, records[3].Metadata, "metadata should not be nil.")
+    assert.Equal(t, "static", records[3].Metadata.DataSource)
+    assert.Equal(t, "New York", records[3].Metadata.Tags["region"])
+    assert.Equal(t, "B", records[3].Metadata.Tags["service"])
 }
