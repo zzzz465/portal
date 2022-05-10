@@ -23,7 +23,7 @@ func (ds *DataSource) Identifier() string {
 }
 
 func (ds *DataSource) TTL() time.Duration {
-	return 60
+	return 60 * time.Second
 }
 
 func NewDataSource(client *route53.Client, log *zap.SugaredLogger) (*DataSource, error) {
