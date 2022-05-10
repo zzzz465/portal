@@ -44,7 +44,7 @@ func getRecordsHandler(store store.Store) func(c echo.Context) error {
 // @Success      200  {object}  []types.Record
 // @Failure      400
 // @Failure      500
-// @Router       /store [get]
+// @Router       /records [get]
 func getRecordHandler(store store.Store) func(c echo.Context) error {
     return func(c echo.Context) error {
         datasource := c.Param("record-name")
