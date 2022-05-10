@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cockroachdb/errors"
 	"github.com/hashicorp/go-multierror"
+	"github.com/zzzz465/portal/sd/internal/measure"
 	"github.com/zzzz465/portal/sd/internal/store"
 	"go.uber.org/zap"
 )
@@ -68,6 +69,7 @@ func (r *Runner) run(ctx context.Context) error {
 
 func (r *Runner) executeTask(ctx context.Context) error {
 	r.log.Infof("start updating records...")
+	defer measure.Elapsed(r.log, "update took: %v")()
 	return r.updateRecords(ctx)
 }
 
