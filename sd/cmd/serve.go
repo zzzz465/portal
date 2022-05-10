@@ -8,6 +8,7 @@ import (
     "github.com/spf13/cobra"
     "github.com/spf13/viper"
     "github.com/zzzz465/portal/sd/internal/datasource/awsroute53"
+    "github.com/zzzz465/portal/sd/internal/datasource/static"
     "github.com/zzzz465/portal/sd/internal/runner"
     "github.com/zzzz465/portal/sd/internal/store"
     "github.com/zzzz465/portal/sd/internal/web"
@@ -45,6 +46,7 @@ func runServe(cmd *cobra.Command, args []string) {
     runners := make([]runner.Runner, 0)
 
     if viper.GetBool("datasource.AWSRoute53.enabled") {
+        log.Debug("datasource route53 enabled.")
         r, err := initAWSRoute53Runner(inMemoryStore)
         if err != nil {
             log.Panic(err)
@@ -54,6 +56,7 @@ func runServe(cmd *cobra.Command, args []string) {
     }
 
     if viper.GetBool("datasource.static.enabled") {
+        log.Debug("datasource static enabled.")
         r, err := initStaticRunner(inMemoryStore)
         if err != nil {
             log.Panic(err)
@@ -112,17 +115,7 @@ func initAWSRoute53Runner(store store.Store) (*runner.Runner, error) {
 }
 
 func initStaticRunner(store store.Store) (*runner.Runner, error) {
-    awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
-    if err != nil {
-        return nil, errors.Wrap(err, "failed init aws config.")
-    }
-
-    client := route53.NewFromConfig(awsConfig)
-
-    ds, err := awsroute53.NewDataSource(client, nil)
-    if err != nil {
-        return nil, errors.Wrap(err, "failed creating aws route53 datasource.")
-    }
+    ds := static.NewDataSource(viper.GetViper())
 
     r, err := runner.NewRunner(ds, store, nil)
     if err != nil {

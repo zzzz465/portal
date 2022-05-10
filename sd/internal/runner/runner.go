@@ -19,7 +19,7 @@ type Runner struct {
 }
 
 func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger) (*Runner, error) {
-    runner := &Runner{datasource: datasource, store: store, log: log, jobChan: make(chan any)}
+    runner := &Runner{datasource: datasource, store: store, log: log, jobChan: make(chan any, 1)}
 
     if log == nil {
         log, err := zap.NewDevelopment()
@@ -49,6 +49,8 @@ func (r *Runner) Start(ctx context.Context) <-chan error {
 
         intervalCtx, cancelFunc = context.WithCancel(ctx)
         Interval(intervalCtx, r.datasource.TTL(), r.jobChan)
+    } else {
+        r.jobChan <- struct{}{}
     }
 
     if updatable, ok := r.datasource.(updatable); ok {
