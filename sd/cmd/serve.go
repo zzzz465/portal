@@ -4,11 +4,14 @@ import (
     "context"
     "github.com/aws/aws-sdk-go-v2/config"
     "github.com/aws/aws-sdk-go-v2/service/route53"
+    "github.com/cockroachdb/errors"
     "github.com/spf13/cobra"
+    "github.com/spf13/viper"
     "github.com/zzzz465/portal/sd/internal/datasource/awsroute53"
     "github.com/zzzz465/portal/sd/internal/runner"
     "github.com/zzzz465/portal/sd/internal/store"
     "github.com/zzzz465/portal/sd/internal/web"
+    "sync"
 )
 
 // serveCmd represents the serve command
@@ -36,30 +39,43 @@ func runServe(cmd *cobra.Command, args []string) {
     // TODO: support selecting (multiple) data source. maybe use config file?
 
     inMemoryStore := store.NewInMemoryStore()
-
-    awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
-    if err != nil {
-        errExit(1, "failed init aws config. %+v", err)
-    }
-
-    client := route53.NewFromConfig(awsConfig)
-
-    ds, err := awsroute53.NewDataSource(client, nil)
-    if err != nil {
-        errExit(1, "failed creating aws route53 datasource. %+v", err)
-    }
-
-    route53Runner, err := runner.NewRunner(ds, inMemoryStore, nil)
-    if err != nil {
-        errExit(1, "failed creating route53 runner. %+v", err)
-    }
-
     ctx, cancel := context.WithCancel(context.TODO())
     defer cancel()
 
-    var runnerError error
-    // TODO: what's the better way to get error that raised in runner?
-    route53Runner.Start(ctx, &runnerError)
+    runners := make([]runner.Runner, 0)
+
+    if viper.GetBool("datasource.AWSRoute53.enabled") {
+        r, err := initAWSRoute53Runner(inMemoryStore)
+        if err != nil {
+            log.Panic(err)
+        }
+
+        runners = append(runners, *r)
+    }
+
+    if viper.GetBool("datasource.static.enabled") {
+        r, err := initStaticRunner(inMemoryStore)
+        if err != nil {
+            log.Panic(err)
+        }
+
+        runners = append(runners, *r)
+    }
+
+    wg := sync.WaitGroup{}
+
+    for _, r := range runners {
+        errChan := r.Start(ctx)
+        wg.Add(1)
+        go func() {
+            err := <-errChan
+            if err != nil {
+                log.Errorf("runner ended with error: %+v", err)
+            }
+
+            wg.Done()
+        }()
+    }
 
     server := web.NewHTTPServer(inMemoryStore)
     serverError := server.Start()
@@ -68,7 +84,47 @@ func runServe(cmd *cobra.Command, args []string) {
         log.Errorf("serverError: %+v", serverError)
     }
 
-    if runnerError != nil {
-        log.Errorf("runnerError: %+v", runnerError)
+    wg.Wait()
+}
+
+func initAWSRoute53Runner(store store.Store) (*runner.Runner, error) {
+    awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+    if err != nil {
+        return nil, errors.Wrap(err, "failed init aws config.")
     }
+
+    client := route53.NewFromConfig(awsConfig)
+
+    ds, err := awsroute53.NewDataSource(client, nil)
+    if err != nil {
+        return nil, errors.Wrap(err, "failed creating aws route53 datasource.")
+    }
+
+    r, err := runner.NewRunner(ds, store, nil)
+    if err != nil {
+        return nil, errors.Wrap(err, "failed creating route53 runner.")
+    }
+
+    return r, nil
+}
+
+func initStaticRunner(store store.Store) (*runner.Runner, error) {
+    awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+    if err != nil {
+        return nil, errors.Wrap(err, "failed init aws config.")
+    }
+
+    client := route53.NewFromConfig(awsConfig)
+
+    ds, err := awsroute53.NewDataSource(client, nil)
+    if err != nil {
+        return nil, errors.Wrap(err, "failed creating aws route53 datasource.")
+    }
+
+    r, err := runner.NewRunner(ds, store, nil)
+    if err != nil {
+        return nil, errors.Wrap(err, "failed creating route53 runner.")
+    }
+
+    return r, nil
 }
