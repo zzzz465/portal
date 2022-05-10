@@ -29,17 +29,20 @@ func (ds *DataSource) TTL() time.Duration {
 }
 
 func (ds *DataSource) FetchRecords() ([]types.Record, error) {
-    recordMaps, ok := ds.staticDataSource.Get("datasource.static.values").([]map[string]interface{})
+    recordMaps, ok := ds.staticDataSource.Get("datasource.static.values").([]interface{})
     if !ok {
         return nil, errors.New("cannot read static values from config.")
     }
 
+    //records := lo.RepeatBy(len(recordMaps), func(_ int) types.Record { return types.NewRecord() })
     records := make([]types.Record, len(recordMaps))
     for i, record := range recordMaps {
         err := mapstructure.Decode(record, &records[i])
         if err != nil {
             return nil, err
         }
+
+        records[i].Metadata.DataSource = ds.Identifier()
     }
 
     return records, nil
