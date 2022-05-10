@@ -2,6 +2,7 @@ package static
 
 import (
     "github.com/cockroachdb/errors"
+    "github.com/mitchellh/mapstructure"
     "github.com/spf13/viper"
     "github.com/zzzz465/portal/sd/internal/types"
     "time"
@@ -28,9 +29,17 @@ func (ds *DataSource) TTL() time.Duration {
 }
 
 func (ds *DataSource) FetchRecords() ([]types.Record, error) {
-    records, ok := ds.staticDataSource.Get("datasource.static.values").([]types.Record)
+    recordMaps, ok := ds.staticDataSource.Get("datasource.static.values").([]map[string]interface{})
     if !ok {
         return nil, errors.New("cannot read static values from config.")
+    }
+
+    records := make([]types.Record, len(recordMaps))
+    for i, record := range recordMaps {
+        err := mapstructure.Decode(record, &records[i])
+        if err != nil {
+            return nil, err
+        }
     }
 
     return records, nil
