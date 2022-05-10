@@ -62,8 +62,11 @@ func runServe(cmd *cobra.Command, args []string) {
         runners = append(runners, *r)
     }
 
-    wg := sync.WaitGroup{}
+    if len(runners) == 0 {
+        log.Panic("no runners are enabled. at least 1 runner required.")
+    }
 
+    wg := sync.WaitGroup{}
     for _, r := range runners {
         errChan := r.Start(ctx)
         wg.Add(1)
