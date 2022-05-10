@@ -50,7 +50,10 @@ func (ds *DataSource) FetchRecords() ([]types.Record, error) {
 		return nil, err
 	}
 
-	ds.log.Debugf("fetched records: %v", recordSets)
+	names := lo.Map(recordSets, func(set types2.ResourceRecordSet, _ int) string {
+		return *set.Name
+	})
+	ds.log.Debug("fetched records: ", names)
 
 	return toRecords(recordSets), nil
 }
