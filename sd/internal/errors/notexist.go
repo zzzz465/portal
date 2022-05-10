@@ -1,25 +1,25 @@
 package errors
 
 type NotExist interface {
-	NotExist() bool
+    NotExist() bool
 }
 
 type errorNotExist struct {
-	message string
+    message string
 }
 
 var ErrNotExist = NewNotExistError("")
 
 func NewNotExistError(message string) error {
-	return &errorNotExist{
-		message: message,
-	}
+    return &errorNotExist{
+        message: message,
+    }
 }
 
 func (e *errorNotExist) NotExist() bool {
-	return true
+    return true
 }
 
 func (e *errorNotExist) Error() string {
-	return e.message
+    return e.message
 }
