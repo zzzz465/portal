@@ -38,10 +38,16 @@ func (r *Runner) Start(ctx context.Context, error *error) {
 		*error = errors.New("runner is already running!")
 	}
 
-	r.log.Infof("starting runner. interval: %s", r.datasource.TTL())
+	var cancelFunc context.CancelFunc = nil
 
-	intervalCtx, cancel := context.WithCancel(ctx)
-	Interval(intervalCtx, r.datasource.TTL(), r.jobChan)
+	TTL := r.datasource.TTL()
+	if TTL > 0 {
+		r.log.Infof("starting runner. interval: %s", r.datasource.TTL())
+		var intervalCtx context.Context
+
+		intervalCtx, cancelFunc = context.WithCancel(ctx)
+		Interval(intervalCtx, r.datasource.TTL(), r.jobChan)
+	}
 
 	go func() {
 		err := r.run(ctx)
@@ -49,7 +55,9 @@ func (r *Runner) Start(ctx context.Context, error *error) {
 			*error = err
 		}
 
-		cancel()
+		if cancelFunc != nil {
+			cancelFunc()
+		}
 	}()
 }
 
