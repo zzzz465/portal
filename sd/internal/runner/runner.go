@@ -49,6 +49,10 @@ func (r *Runner) Start(ctx context.Context, error *error) {
         Interval(intervalCtx, r.datasource.TTL(), r.jobChan)
     }
 
+    if updatable, ok := r.datasource.(updatable); ok {
+        updatable.OnDatasourceUpdated(r.onUpdatedCallback)
+    }
+
     go func() {
         err := r.run(ctx)
         if err != nil {
@@ -100,4 +104,8 @@ func (r *Runner) updateRecords(ctx context.Context) error {
     }
 
     return err
+}
+
+func (r *Runner) onUpdatedCallback() {
+    r.jobChan <- struct{}{}
 }
