@@ -33,9 +33,11 @@ func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger)
     return runner, nil
 }
 
-func (r *Runner) Start(ctx context.Context, error *error) {
+func (r *Runner) Start(ctx context.Context) <-chan error {
+    errChan := make(chan error)
+
     if r.running {
-        *error = errors.New("runner is already running!")
+        errChan <- errors.New("runner is already running!")
     }
 
     var cancelFunc context.CancelFunc = nil
@@ -54,15 +56,14 @@ func (r *Runner) Start(ctx context.Context, error *error) {
     }
 
     go func() {
-        err := r.run(ctx)
-        if err != nil {
-            *error = err
-        }
+        errChan <- r.run(ctx)
 
         if cancelFunc != nil {
             cancelFunc()
         }
     }()
+
+    return errChan
 }
 
 func (r *Runner) run(ctx context.Context) error {
