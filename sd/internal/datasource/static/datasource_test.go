@@ -4,8 +4,6 @@ import (
     "github.com/spf13/viper"
     "github.com/stretchr/testify/assert"
     "github.com/zzzz465/portal/sd/internal/datasource/static"
-    "log"
-    "reflect"
     "strings"
     "testing"
 )
@@ -43,8 +41,6 @@ datasource:
     if err != nil {
         t.Error(err)
     }
-
-    log.Println(reflect.TypeOf(staticDataSource.Get("datasource.static.values")))
 
     ds := static.NewDataSource(staticDataSource)
 
