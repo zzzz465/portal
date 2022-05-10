@@ -1,13 +1,14 @@
 package measure
 
 import (
-	"go.uber.org/zap"
 	"time"
 )
 
-func Elapsed(log *zap.SugaredLogger, format string) func() {
+type logFunc func(format string, args ...any)
+
+func Elapsed(logFunc logFunc, format string) func() {
 	now := time.Now()
 	return func() {
-		log.Debugf(format, time.Since(now))
+		logFunc(format, time.Since(now))
 	}
 }
