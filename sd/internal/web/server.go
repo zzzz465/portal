@@ -29,7 +29,7 @@ func NewHTTPServer(store store.Store) *HTTPServer {
 // @title Swagger API
 // @version 1.0
 func (s *HTTPServer) registerMiddlewares() {
-	storeGroup := s.echo.Group("/store")
+	storeGroup := s.echo.Group("/records")
 	RegisterStoreHandlers(storeGroup, s.store)
 
 	s.echo.GET("/swagger/*", echoSwagger.WrapHandler)

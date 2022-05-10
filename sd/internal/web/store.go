@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
@@ -13,7 +14,7 @@ import (
 func RegisterStoreHandlers(g *echo.Group, store store.Store) {
 	g.GET("/", getRecordsHandler(store))
 
-	g.GET("/:datasource", getRecordHandler(store))
+	g.GET("/:record-name", getRecordHandler(store))
 }
 
 func getRecordsHandler(store store.Store) func(c echo.Context) error {
@@ -27,7 +28,12 @@ func getRecordsHandler(store store.Store) func(c echo.Context) error {
 			return records[i].Name < records[j].Name
 		})
 
-		return c.JSON(200, records)
+		raw, err := json.MarshalIndent(records, "", "  ")
+		if err != nil {
+			return c.String(500, err.Error())
+		}
+
+		return c.String(200, string(raw))
 	}
 }
 
@@ -41,7 +47,7 @@ func getRecordsHandler(store store.Store) func(c echo.Context) error {
 // @Router       /store [get]
 func getRecordHandler(store store.Store) func(c echo.Context) error {
 	return func(c echo.Context) error {
-		datasource := c.Param("datasource")
+		datasource := c.Param("record-name")
 		records, err := store.GetRecord(datasource)
 		if err != nil {
 			if errors.Is(err, errors2.ErrNotExist) {
