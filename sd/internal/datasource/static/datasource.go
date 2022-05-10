@@ -2,6 +2,7 @@ package static
 
 import (
     "github.com/cockroachdb/errors"
+    "github.com/fsnotify/fsnotify"
     "github.com/mitchellh/mapstructure"
     "github.com/spf13/viper"
     "github.com/zzzz465/portal/sd/internal/types"
@@ -9,13 +10,16 @@ import (
 )
 
 type DataSource struct {
-    staticDataSource *viper.Viper
+    staticDataSource      *viper.Viper
+    onDatasourceUpdatedCb func()
 }
 
 func NewDataSource(staticDataSource *viper.Viper) *DataSource {
     ds := &DataSource{
         staticDataSource: staticDataSource,
     }
+
+    staticDataSource.OnConfigChange(ds.configChangeCb)
 
     return ds
 }
@@ -46,4 +50,14 @@ func (ds *DataSource) FetchRecords() ([]types.Record, error) {
     }
 
     return records, nil
+}
+
+func (ds *DataSource) configChangeCb(in fsnotify.Event) {
+    if ds.onDatasourceUpdatedCb != nil {
+        ds.onDatasourceUpdatedCb()
+    }
+}
+
+func (ds *DataSource) OnDatasourceUpdated(cb func()) {
+    ds.onDatasourceUpdatedCb = cb
 }
