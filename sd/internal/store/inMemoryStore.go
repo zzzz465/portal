@@ -33,7 +33,7 @@ func (s *InMemoryStore) GetRecord(key string) (*types.Record, error) {
 }
 
 func (s *InMemoryStore) WriteRecord(record types.Record) error {
-	key := fmt.Sprintf("%s:%s", record.Metadata.DataSource, record.Name)
+	key := fmt.Sprintf("%s-%s", record.Metadata.DataSource, record.Name)
 
 	s.dict[key] = record
 
