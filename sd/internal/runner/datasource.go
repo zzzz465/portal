@@ -5,8 +5,6 @@ import (
     "time"
 )
 
-type callback func()
-
 type datasource interface {
     Identifier() string
     TTL() time.Duration
@@ -15,5 +13,5 @@ type datasource interface {
 
 type updatable interface {
     datasource
-    OnDatasourceUpdated(cb callback)
+    OnDatasourceUpdated(cb func())
 }
