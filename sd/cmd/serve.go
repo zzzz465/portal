@@ -24,7 +24,7 @@ var serveCmd = &cobra.Command{
 func init() {
     rootCmd.AddCommand(serveCmd)
 
-    // Here you will define your flags and configuration settings.
+    serveCmd.Flags().String("address", ":4000", "configure host and port")
     serveCmd.Flags().Bool("route53", false, "enable query records from aws route53.")
     if err := viper.BindPFlag("datasource.AWSRoute53.enabled", serveCmd.Flags().Lookup("route53")); err != nil {
         log.Panic(err)
@@ -88,7 +88,7 @@ func runServe(cmd *cobra.Command, args []string) {
     }
 
     server := web.NewHTTPServer(inMemoryStore)
-    serverError := server.Start()
+    serverError := server.Start(viper.GetString("address"))
 
     if serverError != nil {
         log.Errorf("serverError: %+v", serverError)

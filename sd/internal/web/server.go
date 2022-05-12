@@ -35,6 +35,6 @@ func (s *HTTPServer) registerMiddlewares() {
     s.echo.GET("/swagger/*", echoSwagger.WrapHandler)
 }
 
-func (s *HTTPServer) Start() error {
-    return s.echo.Start(":3000")
+func (s *HTTPServer) Start(addr string) error {
+    return s.echo.Start(addr)
 }
