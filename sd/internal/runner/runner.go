@@ -6,9 +6,7 @@ import (
     "github.com/hashicorp/go-multierror"
     "github.com/zzzz465/portal/sd/internal/measure"
     "github.com/zzzz465/portal/sd/internal/store"
-    "github.com/zzzz465/portal/sd/internal/timer"
     "go.uber.org/zap"
-    "time"
 )
 
 type Runner struct {
@@ -18,13 +16,10 @@ type Runner struct {
     running    bool
 
     jobChan chan any
-
-    debounceTime time.Duration
-    debounce     timer.Debounce
 }
 
 func NewRunner(datasource datasource, store store.Store, log *zap.SugaredLogger) (*Runner, error) {
-    runner := &Runner{datasource: datasource, store: store, log: log, jobChan: make(chan any, 1), debounceTime: time.Second}
+    runner := &Runner{datasource: datasource, store: store, log: log, jobChan: make(chan any, 1)}
 
     if log == nil {
         log, err := zap.NewDevelopment()
@@ -63,7 +58,7 @@ func (r *Runner) Start(ctx context.Context) <-chan error {
     }
 
     go func() {
-        errChan <- r.startJobReceiver(ctx)
+        errChan <- r.run(ctx)
 
         if cancelFunc != nil {
             cancelFunc()
@@ -73,11 +68,14 @@ func (r *Runner) Start(ctx context.Context) <-chan error {
     return errChan
 }
 
-func (r *Runner) startJobReceiver(ctx context.Context) error {
+func (r *Runner) run(ctx context.Context) error {
     for {
         <-r.jobChan
 
-        r.debounce.Invoke(func() { r.executeTask(ctx) }, r.debounceTime)
+        err := r.executeTask(ctx)
+        if err != nil {
+            r.log.Errorf("failed updating records. err: %+v", err)
+        }
 
         select {
         case <-ctx.Done():
@@ -87,14 +85,10 @@ func (r *Runner) startJobReceiver(ctx context.Context) error {
     }
 }
 
-func (r *Runner) executeTask(ctx context.Context) {
+func (r *Runner) executeTask(ctx context.Context) error {
     r.log.Infof("start updating records...")
     defer measure.Elapsed(r.log.Infof, "update took: %v")()
-
-    err := r.updateRecords(ctx)
-    if err != nil {
-        r.log.Errorf("failed update records. err: %+v", err)
-    }
+    return r.updateRecords(ctx)
 }
 
 func (r *Runner) updateRecords(ctx context.Context) error {
