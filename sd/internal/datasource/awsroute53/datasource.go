@@ -71,7 +71,7 @@ func toRecords(recordSets []types2.ResourceRecordSet) []types.Record {
             Name: *set.Name,
             Metadata: types.RecordMetadata{
                 DataSource: DataSourceId,
-                Tags:       map[string]string{},
+                Labels:     map[string]string{},
             },
         })
     }

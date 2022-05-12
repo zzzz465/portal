@@ -7,7 +7,7 @@ package config
 records:
 	- name: site-a.example.com
       metadata:
-		tags:
+		labels:
 		  region: seoul
 		  foo: bar
 */

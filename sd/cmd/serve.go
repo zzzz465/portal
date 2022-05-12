@@ -120,7 +120,14 @@ func initAWSRoute53Runner(store store.Store) (*runner.Runner, error) {
 
 func initStaticRunner(store store.Store) (*runner.Runner, error) {
     v := viper.New()
-    v.SetConfigFile(viper.GetString("datasource.static.valueFile"))
+    cfgPath := viper.GetString("datasource.static.valueFile")
+    v.SetConfigFile(cfgPath)
+
+    err := v.ReadInConfig()
+    if err != nil {
+        return nil, err
+    }
+
     v.WatchConfig()
 
     ds := static.NewDataSource(v)
