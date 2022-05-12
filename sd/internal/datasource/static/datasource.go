@@ -33,7 +33,7 @@ func (ds *DataSource) TTL() time.Duration {
 }
 
 func (ds *DataSource) FetchRecords() ([]types.Record, error) {
-    recordMaps, ok := ds.staticDataSource.Get("datasource.static.values").([]interface{})
+    recordMaps, ok := ds.staticDataSource.Get("records").([]interface{})
     if !ok {
         return nil, errors.New("cannot read static values from config.")
     }

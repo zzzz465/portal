@@ -17,28 +17,25 @@ func TestDataSource_FetchRecords(t *testing.T) {
     staticDataSource.SetConfigType("yaml")
 
     cfg := `
-datasource:
-    static:
-        enabled: true
-        values:
-            - name: site-a.example.com
-              metadata:
-                  tags:
-                    region: Seoul
-            - name: site-b.example.com
-              metadata:
-                  tags:
-                    region: California
-            - name: portal.domain.com
-              metadata:
-                  tags:
-                    region: Tokyo
-                    service: A
-            - name: surf.domain.com
-              metadata:
-                  tags:
-                    region:  New York
-                    service: B
+records:
+    - name: site-a.example.com
+      metadata:
+          tags:
+            region: Seoul
+    - name: site-b.example.com
+      metadata:
+          tags:
+            region: California
+    - name: portal.domain.com
+      metadata:
+          tags:
+            region: Tokyo
+            service: A
+    - name: surf.domain.com
+      metadata:
+          tags:
+            region:  New York
+            service: B
 `
 
     err := staticDataSource.ReadConfig(strings.NewReader(cfg))
@@ -93,28 +90,25 @@ func TestDataSource_FetchRecords_Watched(t *testing.T) {
     defer os.Remove(f.Name())
 
     cfg := `
-datasource:
-    static:
-        enabled: true
-        values:
-            - name: site-a.example.com
-              metadata:
-                  tags:
-                    region: Seoul
-            - name: site-b.example.com
-              metadata:
-                  tags:
-                    region: California
-            - name: portal.domain.com
-              metadata:
-                  tags:
-                    region: Tokyo
-                    service: A
-            - name: surf.domain.com
-              metadata:
-                  tags:
-                    region:  New York
-                    service: B
+records:
+    - name: site-a.example.com
+      metadata:
+          tags:
+            region: Seoul
+    - name: site-b.example.com
+      metadata:
+          tags:
+            region: California
+    - name: portal.domain.com
+      metadata:
+          tags:
+            region: Tokyo
+            service: A
+    - name: surf.domain.com
+      metadata:
+          tags:
+            region:  New York
+            service: B
 `
 
     if err = ioutil.WriteFile(f.Name(), []byte(cfg), 0644); err != nil {
@@ -166,14 +160,11 @@ datasource:
     assert.Equal(t, "B", records[3].Metadata.Tags["service"])
 
     cfg = `
-datasource:
-    static:
-        enabled: true
-        values:
-            - name: site-b.example.com
-              metadata:
-                  tags:
-                    region: California
+records:
+    - name: site-b.example.com
+      metadata:
+          tags:
+            region: California
 `
 
     if err := ioutil.WriteFile(f.Name(), []byte(cfg), 0644); err != nil {
