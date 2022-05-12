@@ -33,10 +33,7 @@ datasource:
             # auth option
     static:
         enabled: true
-        values:
-            - name: site-a.example.com
-              tags:
-                region: seoul
+        valueFile: static-config.yaml
 */
 
 type Config struct {

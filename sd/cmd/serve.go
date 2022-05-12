@@ -33,6 +33,10 @@ func init() {
     if err := viper.BindPFlag("datasource.static.enabled", serveCmd.Flags().Lookup("static")); err != nil {
         log.Panic(err)
     }
+    serveCmd.Flags().String("static-datasource-config", "", "configuration file for static datasource")
+    if err := viper.BindPFlag("datasource.static.valueFile", serveCmd.Flags().Lookup("static-datasource-config")); err != nil {
+        log.Panic(err)
+    }
 }
 
 func runServe(cmd *cobra.Command, args []string) {
@@ -115,7 +119,11 @@ func initAWSRoute53Runner(store store.Store) (*runner.Runner, error) {
 }
 
 func initStaticRunner(store store.Store) (*runner.Runner, error) {
-    ds := static.NewDataSource(viper.GetViper())
+    v := viper.New()
+    v.SetConfigFile(viper.GetString("datasource.static.valueFile"))
+    v.WatchConfig()
+
+    ds := static.NewDataSource(v)
 
     r, err := runner.NewRunner(ds, store, nil)
     if err != nil {
