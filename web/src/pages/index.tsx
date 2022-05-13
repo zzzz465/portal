@@ -5,14 +5,11 @@ const Home: NextPage = () => {
     // root
     <div style={{ border: '1px solid red' }}>
       <header>
-        <div style={{ width: '100%', height: '96px', backgroundColor: 'green' }}>
-        </div>
+        <div style={{ width: '100%', height: '96px', backgroundColor: 'green' }}></div>
       </header>
 
       {/* main */}
-      <div>
-
-      </div>
+      <div></div>
     </div>
   )
 }

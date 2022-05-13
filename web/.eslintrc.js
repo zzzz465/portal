@@ -1,20 +1,13 @@
 module.exports = {
-  // plugins: ["prettier"],
-  extends: ['next/core-web-vitals' /* "prettier" */],
+  extends: ['next/core-web-vitals', 'prettier'],
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
     // Since React 17 and typescript 4.1 you can safely disable the rule
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/interface-name-prefix': 'off',
-    // indent option conflicts with prettier
-    indent: ['off', 2, { SwitchCase: 1 }],
-    'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single'],
-    semi: ['error', 'never'],
     'no-case-declarations': 'error',
     'no-underscore-dangle': 'off',
-    'prettier/prettier': 'warn',
     'no-restricted-syntax': ['off'],
     '@typescript-eslint/no-namespace': ['off'],
     'func-names': ['off'],
