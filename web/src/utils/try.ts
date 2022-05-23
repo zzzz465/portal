@@ -16,7 +16,7 @@ export function try0<E = {}, T = {}>(func: Func<T>): Option<T, E> {
  * an error may be wrapped using ono if ErrorLike is being thrown.
  * otherwise, it'll return an thrown value as it is.
  */
-export async function tryP<E = {}, T = any>(func: Func<T>): Promise<Option<Awaited<T>, E>> {
+export async function tryP<T = {}, E = {}>(func: Func<T>): Promise<Option<Awaited<T>, E>> {
   try {
     return [await func(), null]
   } catch (err) {
