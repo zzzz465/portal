@@ -1,0 +1,13 @@
+{
+  "name": "portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install": "pnpm run --recursive install",
+    "dev": "pnpm run --recursive dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

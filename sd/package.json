@@ -1,0 +1,14 @@
+{
+  "name": "sd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "go run main.go serve --static --static-datasource-config=static-config.yaml",
+    "build": "go build",
+    "start": "pnpm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
