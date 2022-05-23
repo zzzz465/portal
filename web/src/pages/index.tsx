@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import type { NextPage } from 'next'
+import Image from 'next/image'
+import noImage from '../../public/no-image.png'
 
 const Home: NextPage = () => {
   const items = (count = 32) => _.times(count).map(() =>
   (
-    <li>
+    <li key={count}>
       <div className='flex gap-4 justify-between'>
         <h4>host1.example.com</h4>
         <ul className='flex gap-2'>
@@ -16,10 +18,10 @@ const Home: NextPage = () => {
   ))
 
   const gridItems = (count = 32) => _.times(count).map(() => (
-    <li>
+    <li key={count}>
       <a className='block'>
         {/* Icon */}
-        <img className='aspect-square w-32 h-32' />
+        <Image width='128px' height='128px' className='aspect-square' alt='icon' src={noImage.src} />
 
         {/* title */}
         {/* <Text> creates hydration error. https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render */}
@@ -64,7 +66,7 @@ const Home: NextPage = () => {
         <div id='bottom-layout' style={{ flex: 1 }} className='w-3/4'>
           <div id='grid-items-container' className='mx-auto p-8'>
             {/* all groups (grid icon list) */}
-            <ol className='w-full flex flex-row flex-wrap gap-8 overflow-y-hidden justify-start'>
+            <ol className='w-full flex flex-row flex-wrap gap-12 overflow-y-hidden justify-start'>
               {gridItems()}
             </ol>
           </div>
