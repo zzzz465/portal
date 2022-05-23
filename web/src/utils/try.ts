@@ -1,9 +1,9 @@
-import ono, { OnoError } from 'ono'
+import ono from 'ono'
 import { Option } from '../types/option'
 
 type Func<T> = () => T
 
-export function try0<T, E>(func: Func<T>): Option<T, E> {
+export function try0<E = {}, T = {}>(func: Func<T>): Option<T, E> {
   try {
     return [func(), null]
   } catch (err) {
@@ -11,11 +11,21 @@ export function try0<T, E>(func: Func<T>): Option<T, E> {
   }
 }
 
-export async function tryP<T, E>(func: Func<T>): Promise<Option<Awaited<T>, OnoError<E>>> {
+/**
+ * wraps method with try/catch. catches the error and returns as Option<T, E>
+ * an error may be wrapped using ono if ErrorLike is being thrown.
+ * otherwise, it'll return an thrown value as it is.
+ */
+export async function tryP<E = {}, T = {}>(func: Func<T>): Promise<Option<Awaited<T>, E>> {
   try {
     return [await func(), null]
   } catch (err) {
-    // TODO: maybe err is not an error type
-    return [null, ono(err as E)]
+    if (err === null || err === undefined) {
+      return [null, {} as any]
+    } else if (err instanceof Error) {
+      return [null, ono(err as any)]
+    } else {
+      return [null, err as E]
+    }
   }
 }
