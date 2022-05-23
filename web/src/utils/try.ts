@@ -11,7 +11,7 @@ export function try0<T, E>(func: Func<T>): Option<T, E> {
   }
 }
 
-export async function tryP<T, E>(func: Func<T>): Promise<Option<T, OnoError<E>>> {
+export async function tryP<T, E>(func: Func<T>): Promise<Option<Awaited<T>, OnoError<E>>> {
   try {
     return [await func(), null]
   } catch (err) {
