@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { Record } from '../../../types/record'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return res.status(200).json({})
+export type RecordsResponse = {
+  records: Record[]
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<RecordsResponse>) {
+  return res.status(200).json({
+    records: [],
+  })
 }
