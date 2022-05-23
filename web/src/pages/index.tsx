@@ -1,7 +1,5 @@
-import { Icon, Stack, Text } from '@fluentui/react'
-import type { NextPage } from 'next'
 import _ from 'lodash'
-import backgroundImage from '../../public/background.webp'
+import type { NextPage } from 'next'
 
 const Home: NextPage = () => {
   const items = (count = 32) => _.times(count).map(() =>
@@ -19,14 +17,14 @@ const Home: NextPage = () => {
 
   const gridItems = (count = 32) => _.times(count).map(() => (
     <li>
-      <a style={{ width: '128px', height: '96px' }} className='w-full h-full block'>
+      <a className='block'>
         {/* Icon */}
         <img className='aspect-square w-32 h-32' />
 
         {/* title */}
         {/* <Text> creates hydration error. https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render */}
         {/* <Text>Foobar</Text> */}
-        <h3>foobar</h3>
+        <h3 className='text-center'>NAME HERE</h3>
       </a>
     </li>
   ))
@@ -35,39 +33,41 @@ const Home: NextPage = () => {
     // root
     <div style={{  /* backgroundImage: `url(${backgroundImage.src})` */ }} className='w-screen h-screen flex flex-col items-center overflow-hidden'>
       <header style={{ backgroundColor: 'green' }} className='w-full flex flex-col items-center h-14'>
-        <div style={{ width: '960px' }} className='h-full'>
-          <h1 style={{}} className='w-full text-center'>
-            여기에 검색창 넣기
+        <div style={{ width: '960px', border: '2px solid red', background: 'white' }} className='h-full flex flex-row items-center my-2'>
+          <h1 className='w-full text-center'>
+            Search
           </h1>
         </div>
       </header>
 
       {/* main */}
-      <div id='main-container' style={{ width: '960px' }} className='flex flex-col flex-1 overflow-hidden'>
+      <div id='main-container' className='flex flex-row flex-1 overflow-auto my-12 align-middle justify-center'>
         {/* upper layout */}
-        <div id='upper-layout' style={{}} className='w-full h-2/5 flex flex-row'>
-          {/* frequently accessed records */}
-          {/* TODO: prevent growing */}
-          <div id='frequently-accessed-records' style={{ flex: '1' }} className='p-2 px-4 overflow-y-scroll'>
+        {/* <div id='upper-layout' style={{}} className='w-full h-2/5 flex flex-row'> */}
+        {/* frequently accessed records */}
+        {/* TODO: prevent growing */}
+        {/* <div id='frequently-accessed-records' style={{ flex: '1' }} className='p-2 px-4 overflow-y-scroll'>
             <ol>
               {items()}
             </ol>
-          </div>
+          </div> */}
 
-          {/* recntly added records */}
-          <div id='recently-added-records' style={{ flex: '1' }} className='p-2 px-4 overflow-y-scroll'>
+        {/* recntly added records */}
+        {/* <div id='recently-added-records' style={{ flex: '1' }} className='p-2 px-4 overflow-y-scroll'>
             <ol>
               {items()}
             </ol>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
 
         {/* bottom layout */}
-        <div id='bottom-layout' style={{ flex: 1 }} className='w-full overflow-auto'>
-          {/* all groups (grid icon list) */}
-          <ol className='w-full flex flex-row flex-wrap gap-8 overflow-y-hidden'>
-            {gridItems()}
-          </ol>
+        <div id='bottom-layout' style={{ flex: 1 }} className='w-3/4'>
+          <div id='grid-items-container' className='mx-auto p-8'>
+            {/* all groups (grid icon list) */}
+            <ol className='w-full flex flex-row flex-wrap gap-8 overflow-y-hidden justify-start'>
+              {gridItems()}
+            </ol>
+          </div>
         </div>
       </div>
     </div >
