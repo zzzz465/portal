@@ -1,4 +1,5 @@
 {
+  "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
@@ -14,8 +15,5 @@
   ],
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.tabSize": 2
   }
 }
