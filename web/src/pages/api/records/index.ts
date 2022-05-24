@@ -8,7 +8,7 @@ export type RecordsResponse = Record[]
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<RecordsResponse | any>) {
   const [recordsResponse, err0] = await tryP(() =>
-    axios.get<RecordsResponse>('/records/', { baseURL: BACKEND_SERVER_URL })
+    axios.get<RecordsResponse>('/records', { baseURL: BACKEND_SERVER_URL })
   )
   if (err0 != null) {
     return res.status(500).send((err0 as AxiosError).cause)
