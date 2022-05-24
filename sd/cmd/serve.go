@@ -7,6 +7,7 @@ import (
     "github.com/cockroachdb/errors"
     "github.com/spf13/cobra"
     "github.com/spf13/viper"
+    "github.com/zzzz465/portal/sd/internal/datasource"
     "github.com/zzzz465/portal/sd/internal/datasource/awsroute53"
     "github.com/zzzz465/portal/sd/internal/datasource/static"
     "github.com/zzzz465/portal/sd/internal/runner"
@@ -51,25 +52,28 @@ func runServe(cmd *cobra.Command, args []string) {
     defer cancel()
 
     runners := make([]runner.Runner, 0)
+    dsMap := make(map[string]datasource.Datasource)
 
     if viper.GetBool("datasource.AWSRoute53.enabled") {
         log.Debug("datasource route53 enabled.")
-        r, err := initAWSRoute53Runner(inMemoryStore)
+        r, ds, err := initAWSRoute53Runner(inMemoryStore)
         if err != nil {
             log.Panic(err)
         }
 
         runners = append(runners, *r)
+        dsMap[ds.Identifier()] = ds
     }
 
     if viper.GetBool("datasource.static.enabled") {
         log.Debug("datasource static enabled.")
-        r, err := initStaticRunner(inMemoryStore)
+        r, ds, err := initStaticRunner(inMemoryStore)
         if err != nil {
             log.Panic(err)
         }
 
         runners = append(runners, *r)
+        dsMap[ds.Identifier()] = ds
     }
 
     if len(runners) == 0 {
@@ -93,7 +97,7 @@ func runServe(cmd *cobra.Command, args []string) {
     addr := viper.GetString("address")
     log.Infof("starting server with addr %s", addr)
 
-    server := web.NewHTTPServer(inMemoryStore)
+    server := web.NewHTTPServer(inMemoryStore, dsMap)
     serverError := server.Start(addr)
 
     if serverError != nil {
@@ -103,35 +107,35 @@ func runServe(cmd *cobra.Command, args []string) {
     wg.Wait()
 }
 
-func initAWSRoute53Runner(store store.Store) (*runner.Runner, error) {
+func initAWSRoute53Runner(store store.Store) (*runner.Runner, datasource.Datasource, error) {
     awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
     if err != nil {
-        return nil, errors.Wrap(err, "failed init aws config.")
+        return nil, nil, errors.Wrap(err, "failed init aws config.")
     }
 
     client := route53.NewFromConfig(awsConfig)
 
     ds, err := awsroute53.NewDataSource(client, nil)
     if err != nil {
-        return nil, errors.Wrap(err, "failed creating aws route53 datasource.")
+        return nil, nil, errors.Wrap(err, "failed creating aws route53 datasource.")
     }
 
     r, err := runner.NewRunner(ds, store, nil)
     if err != nil {
-        return nil, errors.Wrap(err, "failed creating route53 runner.")
+        return nil, nil, errors.Wrap(err, "failed creating route53 runner.")
     }
 
-    return r, nil
+    return r, ds, nil
 }
 
-func initStaticRunner(store store.Store) (*runner.Runner, error) {
+func initStaticRunner(store store.Store) (*runner.Runner, datasource.Datasource, error) {
     v := viper.New()
     cfgPath := viper.GetString("datasource.static.valueFile")
     v.SetConfigFile(cfgPath)
 
     err := v.ReadInConfig()
     if err != nil {
-        return nil, err
+        return nil, nil, err
     }
 
     v.WatchConfig()
@@ -140,8 +144,8 @@ func initStaticRunner(store store.Store) (*runner.Runner, error) {
 
     r, err := runner.NewRunner(ds, store, nil)
     if err != nil {
-        return nil, errors.Wrap(err, "failed creating route53 runner.")
+        return nil, nil, errors.Wrap(err, "failed creating route53 runner.")
     }
 
-    return r, nil
+    return r, ds, nil
 }
