@@ -12,6 +12,7 @@ import (
 )
 
 func RegisterStoreHandlers(g *echo.Group, store store.Store) {
+    g.GET("", getRecordsHandler(store))
     g.GET("/", getRecordsHandler(store))
 
     g.GET("/:record-name", getRecordHandler(store))
