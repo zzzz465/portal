@@ -31,7 +31,7 @@ export default async function handler(
   const groupRecordItems = makeGroupRecordItems(records)
 
   const wellKnownRecordItems = from(records)
-    .Where((rec) => rec.data.metadata.labels.recordType === 'groupedRecordItem')
+    .Where((rec) => rec.data.metadata.labels.recordType === 'wellKnownRecordItem')
     .Cast<WellKnownRecordItem>()
     .ToArray()
 
