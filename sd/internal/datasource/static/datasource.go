@@ -53,6 +53,10 @@ func (ds *DataSource) FetchRecords() ([]types.Record, error) {
 }
 
 func (ds *DataSource) configChangeCb(in fsnotify.Event) {
+    // TODO: how to handle this error?
+    // TODO: this callback called twice. apply debounce required.
+    _ = ds.staticDataSource.ReadInConfig()
+
     if ds.onDatasourceUpdatedCb != nil {
         ds.onDatasourceUpdatedCb()
     }
