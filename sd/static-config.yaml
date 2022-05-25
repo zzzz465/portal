@@ -6,6 +6,7 @@ records:
     tags: ["example.com"]
     metadata:
       labels:
+        recordType: well-known # known label
         region: seoul
         foo: bar
   - name: site-b.example.com
@@ -14,3 +15,154 @@ records:
       labels:
         region: usa
         foo: bar3
+  - name: site-c.example.com
+    tags: ["example.com"]
+    metadata:
+      labels:
+        some: value
+  - name: apple.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: youtube.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: www.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: linkedin.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: play.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: www.blogger.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: support.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: microsoft.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: en.wikipedia.org
+    tags: [".org"]
+    metadata:
+      labels: {}
+  - name: mozilla.org
+    tags: [".org"]
+    metadata:
+      labels: {}
+  - name: cloudflare.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: docs.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: youtu.be
+    metadata:
+      labels:
+        recordType: well-known
+  - name: wordpress.org
+    metadata:
+      labels: {}
+  - name: maps.google.com
+    tags: [".com"]
+  - name: googleusercontent.com
+  - name: adobe.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: drive.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: plus.google.comeuropa.eu
+  - name: whatsapp.com
+    tags: [".com"]
+  - name: bp.blogspot.com
+    tags: [".com"]
+  - name: accounts.google.com
+    tags: [".com", "google.com"]
+  - name: sites.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: uol.com.br
+    metadata:
+      labels: {}
+  - name: vimeo.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: vk.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: istockphoto.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: facebook.com
+    tags: [".com"]
+  - name: amazon.com
+    tags: [".com"]
+  - name: es.wikipedia.org
+  - name: t.me
+  - name: github.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: search.google.com
+    tags: [".com", "google.com"]
+    metadata:
+      labels: {}
+  - name: imdb.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: enable-javascript.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: feedburner.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: files.wordpress.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: gstatic.com
+    tags: [".com"]
+    metadata:
+      labels: {}
+  - name: slideshare.net
+  - name: dailymotion.com
+    tags: [".com"]
+  - name: globo.com
+    tags: [".com"]
+  - name: mail.ru
+  - name: nytimes.com
+    tags: [".com"]
+  - name: google.es
+  - name: cnn.com
+    tags: [".com"]
+  - name: news.google.com
+    tags: [".com", "google.com"]
+  - name: bbc.com
+    tags: [".com"]
+  - name: wikimedia.org
+  - name: live.com
+    tags: [".com"]
+    metadata:
+      labels: {}
