@@ -3,11 +3,13 @@
 
 records:
   - name: site-a.example.com
+    tags: ["example.com"]
     metadata:
       labels:
         region: seoul
         foo: bar
   - name: site-b.example.com
+    tags: ["example.com", "site-b"]
     metadata:
       labels:
         region: usa
