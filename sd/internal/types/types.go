@@ -1,9 +1,9 @@
 package types
 
 type Record struct {
-    Name     string         `yaml:"name"`
-    Tags     []string       `yaml:"tags"`
-    Metadata RecordMetadata `yaml:"metadata"`
+    Name     string         `yaml:"name" json:"name"`
+    Tags     []string       `yaml:"tags" json:"tags"`
+    Metadata RecordMetadata `yaml:"metadata" json:"metadata"`
 }
 
 func NewRecord() Record {
@@ -11,8 +11,8 @@ func NewRecord() Record {
 }
 
 type RecordMetadata struct {
-    DataSource string            `yaml:"dataSource"`
-    Labels     map[string]string `yaml:"labels"`
+    DataSource string            `yaml:"dataSource" json:"dataSource"`
+    Labels     map[string]string `yaml:"labels" json:"labels"`
 }
 
 func NewRecordMetadata() *RecordMetadata {
