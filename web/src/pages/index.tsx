@@ -1,9 +1,29 @@
 import _ from 'lodash'
-import type { NextPage } from 'next'
+import type { GetServerSidePropsResult, NextPage } from 'next'
 import Image from 'next/image'
 import noImage from '../../public/no-image.png'
+import { DisplayableRecordItemType } from '../types/recordItem'
+import { tryP } from '../utils/try'
 
-const Home: NextPage = () => {
+type Props = {
+  items: DisplayableRecordItemType[]
+  error?: Error
+}
+
+export async function getServerSideProps(): Promise<GetServerSidePropsResult<Props>> {
+  const [res, err0] = await tryP(() => fetch('http://localhost:3000/api/items'))
+  if (err0 !== null) {
+    return { props: { items: [], error: err0 as Error } }
+  }
+
+  return { props: await res.json() }
+}
+
+const Home: NextPage<Props> = (props: Props) => {
+  if (props.error) {
+    // TODO: error handling
+  }
+
   const items = (count = 32) => _.times(count).map(() =>
   (
     <li key={count}>
