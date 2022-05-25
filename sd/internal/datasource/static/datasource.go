@@ -4,6 +4,7 @@ import (
     "github.com/cockroachdb/errors"
     "github.com/fsnotify/fsnotify"
     "github.com/mitchellh/mapstructure"
+    "github.com/samber/lo"
     "github.com/spf13/viper"
     "github.com/zzzz465/portal/sd/internal/types"
     "time"
@@ -38,8 +39,7 @@ func (ds *DataSource) FetchRecords() ([]types.Record, error) {
         return nil, errors.New("cannot read static values from config.")
     }
 
-    //records := lo.RepeatBy(len(recordMaps), func(_ int) types.Record { return types.NewRecord() })
-    records := make([]types.Record, len(recordMaps))
+    records := lo.RepeatBy(len(recordMaps), func(_ int) types.Record { return types.NewRecord() })
     for i, record := range recordMaps {
         err := mapstructure.Decode(record, &records[i])
         if err != nil {
