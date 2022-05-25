@@ -74,7 +74,7 @@ const Home: NextPage<Props> = (props: Props) => {
       </header>
 
       {/* main */}
-      <div id='main-container' className='flex flex-row flex-1 overflow-auto my-12 align-middle justify-center'>
+      <div id='main-container' className='w-full flex flex-row flex-1 overflow-auto my-12 align-middle justify-center'>
         {/* upper layout */}
         {/* <div id='upper-layout' style={{}} className='w-full h-2/5 flex flex-row'> */}
         {/* frequently accessed records */}
