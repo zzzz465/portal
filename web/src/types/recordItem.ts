@@ -14,7 +14,7 @@ export interface RecordItem {
 /**
  * WellKnownRecordItem is an element that can be displayed alone.
  */
-export type WellKnownRecordItem = RecordItem & {
+export type WellKnownRecordItem = Omit<RecordItem, 'type'> & {
   type: 'WellKnownRecordItem'
 }
 
