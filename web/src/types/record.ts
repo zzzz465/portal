@@ -1,4 +1,4 @@
-import { RecordItemType } from './recordItem'
+import { DisplayableRecordItemType } from './recordItem'
 
 type _Record = {
   name: string
@@ -8,11 +8,11 @@ type _Record = {
 
 export type Metadata = {
   dataSource: string
-  labels: Record<string, string>
+  labels: Record<string, string> & KnownLabels
 }
 
 export type KnownLabels = Partial<{
-  recordType: RecordItemType['type']
+  recordType: DisplayableRecordItemType['type']
 }>
 
 // conflict with es5.Record
