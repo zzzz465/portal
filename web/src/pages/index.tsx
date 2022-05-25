@@ -51,6 +51,17 @@ const Home: NextPage<Props> = (props: Props) => {
     </li>
   ))
 
+  const RecordItem = (item: DisplayableRecordItemType) => (
+    <a className='block'>
+      {/* Icon */}
+      <Image width='128px' height='128px' className='aspect-square' alt='icon' src={noImage.src} />
+
+      {/* title */}
+      {/* <Text> creates hydration error. https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render */}
+      {/* <Text>Foobar</Text> */}
+      <h3 className='text-center'>{item.tag}</h3>
+    </a>)
+
   return (
     // root
     <div style={{  /* backgroundImage: `url(${backgroundImage.src})` */ }} className='w-screen h-screen flex flex-col items-center overflow-hidden'>
@@ -87,7 +98,11 @@ const Home: NextPage<Props> = (props: Props) => {
           <div id='grid-items-container' className='mx-auto p-8'>
             {/* all groups (grid icon list) */}
             <ol className='w-full flex flex-row flex-wrap gap-12 overflow-y-hidden justify-start'>
-              {gridItems()}
+              {
+                props.items.map((item) => <li key={item.tag}>
+                  {RecordItem(item)}
+                </li>)
+              }
             </ol>
           </div>
         </div>
