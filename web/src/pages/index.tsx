@@ -1,12 +1,11 @@
-import _ from 'lodash'
 import type { GetServerSidePropsResult, NextPage } from 'next'
 import Image from 'next/image'
 import noImage from '../../public/no-image.png'
-import { DisplayableRecordItemType } from '../types/recordItem'
+import { DisplayableRecordItem, GroupedRecordItem, WellKnownRecordItem } from '../types/recordItem'
 import { tryP } from '../utils/try'
 
 type Props = {
-  items: DisplayableRecordItemType[]
+  items: DisplayableRecordItem[]
   error?: Error
 }
 
@@ -16,7 +15,8 @@ export async function getServerSideProps(): Promise<GetServerSidePropsResult<Pro
     return { props: { items: [], error: err0 as Error } }
   }
 
-  return { props: await res.json() }
+  const data = await res.json()
+  return { props: data }
 }
 
 const Home: NextPage<Props> = (props: Props) => {
@@ -24,43 +24,38 @@ const Home: NextPage<Props> = (props: Props) => {
     // TODO: error handling
   }
 
-  const items = (count = 32) => _.times(count).map(() =>
-  (
-    <li key={count}>
-      <div className='flex gap-4 justify-between'>
-        <h4>host1.example.com</h4>
-        <ul className='flex gap-2'>
-          <li>Key=Value</li>
-          <li>Key2=Value2</li>
-        </ul>
-      </div>
-    </li>
-  ))
+  const WellKnownRecordItem = (item: WellKnownRecordItem) => (
+    <a className='block' href={`http://${item.data.name}`}>
+      {/* Icon */}
+      <Image width='128px' height='128px' className='aspect-square' alt='icon' src={noImage.src} />
 
-  const gridItems = (count = 32) => _.times(count).map(() => (
-    <li key={count}>
-      <a className='block'>
-        {/* Icon */}
-        <Image width='128px' height='128px' className='aspect-square' alt='icon' src={noImage.src} />
+      {/* title */}
+      {/* <Text> creates hydration error. https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render */}
+      <h3 className='text-center'>{item.name}</h3>
+    </a>
+  )
 
-        {/* title */}
-        {/* <Text> creates hydration error. https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render */}
-        {/* <Text>Foobar</Text> */}
-        <h3 className='text-center'>NAME HERE</h3>
-      </a>
-    </li>
-  ))
-
-  const RecordItem = (item: DisplayableRecordItemType) => (
+  const GroupedRecordItem = (item: GroupedRecordItem) => (
     <a className='block'>
       {/* Icon */}
       <Image width='128px' height='128px' className='aspect-square' alt='icon' src={noImage.src} />
 
       {/* title */}
       {/* <Text> creates hydration error. https://stackoverflow.com/questions/71706064/react-18-hydration-failed-because-the-initial-ui-does-not-match-what-was-render */}
-      {/* <Text>Foobar</Text> */}
-      <h3 className='text-center'>{item.tag}</h3>
-    </a>)
+      <h3 className='text-center'>{item.name}</h3>
+    </a>
+  )
+
+  const RecordItem = (item: DisplayableRecordItem) => {
+    switch (item.type) {
+      case 'groupedRecordItem':
+        return GroupedRecordItem(item)
+      case 'wellKnownRecordItem':
+        return WellKnownRecordItem(item)
+      default:
+        <div><h3>(Error) {item}</h3></div>
+    }
+  }
 
   return (
     // root
@@ -99,9 +94,11 @@ const Home: NextPage<Props> = (props: Props) => {
             {/* all groups (grid icon list) */}
             <ol className='w-full flex flex-row flex-wrap gap-12 overflow-y-hidden justify-start'>
               {
-                props.items.map((item) => <li key={item.tag}>
-                  {RecordItem(item)}
-                </li>)
+                props.items.map((item, i) =>
+                  <li key={i}>
+                    {RecordItem(item)}
+                  </li>
+                )
               }
             </ol>
           </div>
