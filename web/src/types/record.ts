@@ -1,5 +1,3 @@
-import { DisplayableRecordItemType } from './recordItem'
-
 type _Record = {
   name: string
   tags: string[]
@@ -12,7 +10,7 @@ export type Metadata = {
 }
 
 export type KnownLabels = Partial<{
-  recordType: DisplayableRecordItemType['type']
+  recordType: 'well-known'
 }>
 
 // conflict with es5.Record

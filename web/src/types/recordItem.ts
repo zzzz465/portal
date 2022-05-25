@@ -1,28 +1,29 @@
 import { Record } from './record'
 
-export type RecordItemType = RecordItem | GroupedRecordItem | WellKnownRecordItem
-export type DisplayableRecordItemType = WellKnownRecordItem | GroupedRecordItem
+export interface Displayable {
+  name: string
+}
+
+export type DisplayableRecordItem = WellKnownRecordItem | GroupedRecordItem
 
 /**
- * RecordItem is an element that is grouped by tags.
+ * RecordItem is a basic element that holds Record object.
  */
 export interface RecordItem {
-  type: 'RecordItem'
   data: Record
 }
 
 /**
  * WellKnownRecordItem is an element that can be displayed alone.
  */
-export type WellKnownRecordItem = Omit<RecordItem, 'type'> & {
+export interface WellKnownRecordItem extends RecordItem, Displayable {
   type: 'wellKnownRecordItem'
 }
 
 /**
  * GroupedRecordItem is an element that holds multiple RecordItem
  */
-export interface GroupedRecordItem {
+export interface GroupedRecordItem extends Displayable {
   type: 'groupedRecordItem'
-  tag: string
   items: RecordItem[]
 }
