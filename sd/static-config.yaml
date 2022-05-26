@@ -86,7 +86,9 @@ records:
     tags: [".com", "google.com"]
     metadata:
       labels: {}
-  - name: plus.google.comeuropa.eu
+  - name: plus.google.com
+    tags: [".com", "google.com"]
+  - name: europa.eu
   - name: whatsapp.com
     tags: [".com"]
   - name: bp.blogspot.com
