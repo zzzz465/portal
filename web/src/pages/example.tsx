@@ -1,3 +1,11 @@
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+} from '@chakra-ui/react'
 import { GetServerSidePropsResult } from 'next'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -28,6 +36,7 @@ export default function Example(props: Props) {
 
   const [current, setCurrent] = useState<GroupedRecordItem | null>(null)
   const [recordSearch, setRecordSearch] = useState('')
+  const [popoverOpen, setPopoverOpen] = useState(false)
 
   const appItem = (item: DisplayableRecordItem) =>
     item.type === 'groupedRecordItem' ? groupedAppItem(item) : linkedAppItem(item)
@@ -55,7 +64,9 @@ export default function Example(props: Props) {
         .filter((item) => item.data.name.includes(recordSearch))
         .map((item) => (
           <li key={item.data.name}>
-            <h3>{item.data.name}</h3>
+            <a className="block w-full h-full" href={`http://${item.data.name}`}>
+              {item.data.name}
+            </a>
           </li>
         ))}
     </ol>
@@ -63,12 +74,27 @@ export default function Example(props: Props) {
 
   return (
     <div id="base" className="w-screen h-screen flex flex-col">
-      <header id="header" className="w-full h-14 bg-slate-700 flex justify-center items-center">
-        <div id="search" className="bg-slate-300 w-1/3 h-1/2 flex itmes-center gap-1 pl-1">
-          <VscSearch className="my-auto" />
-          <input placeholder="Search" className="bg-slate-300 w-full h-full p-1"></input>
-        </div>
-      </header>
+      <Popover isOpen={popoverOpen} onClose={() => setPopoverOpen(false)}>
+        <header id="header" className="w-full h-16 bg-slate-700 flex justify-center items-center">
+          <div id="search" className="bg-slate-300 w-1/3 h-1/2 flex itmes-center gap-1 pl-1">
+            <VscSearch className="my-auto" />
+            <PopoverAnchor>
+              <input
+                onChange={(e) => setPopoverOpen(true)}
+                placeholder="Search"
+                className="bg-slate-300 w-full h-full p-1"
+              />
+            </PopoverAnchor>
+          </div>
+        </header>
+
+        {/* search popover */}
+        <PopoverContent>
+          <PopoverCloseButton />
+          <PopoverBody>this is body</PopoverBody>
+          <PopoverFooter>footer</PopoverFooter>
+        </PopoverContent>
+      </Popover>
 
       {/* main layout */}
       <main className="w-2/3 flex-1 mx-auto pt-12 flex flex-col gap-28">
@@ -101,7 +127,7 @@ export default function Example(props: Props) {
             </div>
           </header>
 
-          <div style={{ border: '2px solid red' }}>{current && recordsList(current)}</div>
+          <div>{current && recordsList(current)}</div>
         </section>
       </main>
     </div>
